@@ -195,16 +195,16 @@ def optimize_mix():
 
 # Streamlit Dashboard
 st.set_page_config(page_title="AI-Based Concrete Mix Optimizer", layout="wide", page_icon="ahsankarya.ico")
-st.title("🔬 AI-Based Concrete Mix Optimizer")
+st.title("🤖 AI-Based Concrete Mix Optimizer")
 st.markdown("### Optimal concrete mix design using Deep Learning & Genetic Algorithms")
 
 
 # Menampilkan logo Ahsan Karya di sidebar
-st.sidebar.image("ahsankarya.png", use_container_width=True)
+st.sidebar.image("ahsantech.png", use_container_width=True)
 st.sidebar.markdown("---")  # Garis pemisah
 
 # Streamlit Page Configuration
-st.sidebar.title("🔬 AI-Based Concrete Mix Optimizer")
+st.sidebar.title("🤖 AI-Based Concrete Mix Optimizer")
 st.sidebar.write("### Information")
 
 # Pilihan bahasa
