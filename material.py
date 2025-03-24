@@ -189,15 +189,12 @@ def optimize_mix():
     Returns:
         numpy.ndarray: Optimal mix design.
     """
-    bounds = [(100, 500), (100, 250), (500, 1200), (0, 50)]  # Cement, Water, Aggregate, Admixture
+    bounds = [(250, 500), (140, 220), (600, 1200), (0, 10)]  # Cement, Water, Aggregate, Admixture
     result = differential_evolution(objective_function, bounds)
     return result.x
 
 # Streamlit Dashboard
 st.set_page_config(page_title="AI-Based Concrete Mix Optimizer", layout="wide", page_icon="ahsankarya.ico")
-st.title("🤖 AI-Based Concrete Mix Optimizer")
-st.markdown("### Optimal concrete mix design using Deep Learning & Genetic Algorithms")
-
 
 # Menampilkan logo Ahsan Karya di sidebar
 st.sidebar.image("ahsantech.png", use_container_width=True)
@@ -250,13 +247,13 @@ if language == "English":
     note_text = """
     **📝 Important Notes:**  
     1️⃣ If a **server error** occurs, please **refresh the page**. 🔄  
-    2️⃣ The process may take **2 minutes** as the system processes **500 data samples**. Please be patient. ⏳  
+    2️⃣ The process may take **1 minutes** as the system processes **300 data samples**. Please be patient. ⏳  
     """
 else:
     note_text = """
     **📝 Catatan Penting:**  
     1️⃣ Jika terjadi **error pada server**, silakan **muat ulang halaman**. 🔄  
-    2️⃣ Proses memerlukan waktu **2 menit** karena sistem memproses **500 sampel data**. Harap bersabar. ⏳  
+    2️⃣ Proses memerlukan waktu **1 menit** karena sistem memproses **300 sampel data**. Harap bersabar. ⏳  
     """
 # Menampilkan Noted Section
 st.sidebar.markdown(note_text)
@@ -267,7 +264,7 @@ st.sidebar.markdown("----")
 # Sidebar for input parameters
 with st.sidebar:
     st.header("🔧 Input Parameters")
-    target_strength = st.slider("Target Compressive Strength (MPa)", 10.0, 100.0, 40.0)
+    target_strength = st.slider("Target Compressive Strength (MPa)", 30.0, 80.0, 25.0)
 
     # Pilihan sumber dataset
     dataset_option = st.radio("Select Dataset Source", ("Use Default Dataset", "Upload Your Own CSV"))
@@ -285,53 +282,138 @@ with st.sidebar:
     batch_size = st.slider("Batch Size", 8, 64, 16)
     optimize_btn = st.button("🚀 Optimize Mix")
 
-# Main logic
+# Custom CSS untuk tampilan modern dan canggih
+st.markdown(
+    """
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+        /* Warna latar belakang */
+        body {
+            background-color: #0d1117;
+            color: #ffffff;
+        }
+
+        /* Animasi Fade-in */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animasi Glow */
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px #33ccff, 0 0 10px #33ccff, 0 0 15px #33ccff; }
+            50% { text-shadow: 0 0 10px #00e6e6, 0 0 20px #00e6e6, 0 0 30px #00e6e6; }
+            100% { text-shadow: 0 0 5px #33ccff, 0 0 10px #33ccff, 0 0 15px #33ccff; }
+        }
+
+        /* Judul */
+        .title {
+            text-align: center;
+            color: #33ccff;
+            font-size: 3rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            animation: fadeIn 2s ease-in-out, glow 3s infinite alternate;
+        }
+
+        /* Subtitle */
+        .subtitle {
+            text-align: center;
+            color: #00e6e6;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        /* Garis pemisah */
+        .separator {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #33ccff, #00e6e6);
+            margin: 20px auto;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* Tombol interaktif */
+        .ai-button {
+            display: block;
+            width: 250px;
+            margin: 30px auto;
+            padding: 15px;
+            text-align: center;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            background: linear-gradient(90deg, #33ccff, #00e6e6);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0 0 10px #00e6e6;
+        }
+
+        .ai-button:hover {
+            background: linear-gradient(90deg, #00e6e6, #33ccff);
+            box-shadow: 0 0 20px #00e6e6;
+        }
+    </style>
+
+    <h1 class="title">🤖 AI-Based Concrete Mix Optimizer</h1>
+    <h4 class="subtitle">Optimize your concrete mix design with AI-powered technology</h4>
+    <div class="separator"></div>
+    """,
+    unsafe_allow_html=True
+)
+
+# ✅ Tambahkan Status Loading yang Lebih Profesional
 if dataset_path and optimize_btn:
-    # Cek apakah dataset bawaan tersedia jika user memilih "Use Default Dataset"
     if dataset_option == "Use Default Dataset" and not os.path.exists(dataset_path):
         st.error(f"❌ Default dataset `{dataset_path}` not found. Please upload a dataset instead.")
     else:
-        # Load and preprocess data
-        st.info("Loading and preprocessing dataset...")
+        st.info("📂 **Loading and preprocessing dataset...**")
         X, y, scaler = load_and_preprocess_data(dataset_path)
 
         if X is not None and y is not None:
-            st.info("Training AI model, please wait...")
-            with st.spinner("Training the model..."):
+            with st.spinner("🧠 **Training AI model, please wait...**"):
                 model, history = train_model(X, y, epochs=epochs, batch_size=batch_size)
 
-            # Visualize training history
-            plot_training_history(history)
+            # ✅ Bungkus Visualisasi dalam Container untuk Tampilan Lebih Rapi
+            with st.container():
+                st.success("✅ **Training Completed!**")
+                plot_training_history(history)
 
-            # Optimize mix
-            st.info("Optimizing concrete mix...")
+            st.info("🔍 **Optimizing concrete mix...**")
             optimal_mix = optimize_mix()
 
-            # Display results
-            st.success("Optimization Complete!")
-            st.subheader("Recommended Mix Composition:")
-            st.write(f"🧪 **Cement**: {optimal_mix[0]:.2f} kg")
-            st.write(f"💧 **Water**: {optimal_mix[1]:.2f} kg")
-            st.write(f"🪨 **Aggregate**: {optimal_mix[2]:.2f} kg")
-            st.write(f"🧂 **Admixture**: {optimal_mix[3]:.2f} kg")
+            # ✅ Hasil Optimasi dalam Kotak Tersendiri
+            with st.container():
+                st.success("🎉 **Optimization Complete!**")
+                st.subheader("🏗️ Recommended Mix Composition")
+                st.write(f"🧪 **Cement**: {optimal_mix[0]:.2f} kg")
+                st.write(f"💧 **Water**: {optimal_mix[1]:.2f} kg")
+                st.write(f"🪨 **Aggregate**: {optimal_mix[2]:.2f} kg")
+                st.write(f"🧂 **Admixture**: {optimal_mix[3]:.2f} kg")
 
-            # Display balloons to celebrate completion
-            st.balloons()
+                # ✅ Animasi Perayaan
+                st.balloons()
 
-            # Add final visualization of the optimized mix
-            st.subheader("Visual Representation of Optimal Mix")
-            mix_labels = ['Cement', 'Water', 'Aggregate', 'Admixture']
-            fig, ax = plt.subplots(figsize=(8, 6))
-            sns.barplot(x=mix_labels, y=optimal_mix, palette="viridis", ax=ax)
-            ax.set_title("Optimal Concrete Mix Composition")
-            ax.set_ylabel("Amount (kg)")
-            st.pyplot(fig)
+            # ✅ Visualisasi dalam Container Terpisah
+            with st.container():
+                st.subheader("📊 **Visual Representation of Optimal Mix**")
+                mix_labels = ['Cement', 'Water', 'Aggregate', 'Admixture']
+                fig, ax = plt.subplots(figsize=(8, 6))
+                sns.barplot(x=mix_labels, y=optimal_mix, palette="coolwarm", ax=ax)
+                ax.set_title("Optimal Concrete Mix Composition", fontsize=14, color='#333')
+                ax.set_ylabel("Amount (kg)", fontsize=12, color='#555')
+                st.pyplot(fig)
 
         else:
-            st.error("Failed to load or preprocess the dataset. Please check the uploaded file.")
+            st.error("⚠️ **Failed to load or preprocess the dataset.** Please check the uploaded file.")
 
 else:
     if not dataset_path:
-        st.warning("Please upload a dataset to proceed.")
+        st.warning("⚠️ **Please upload a dataset to proceed.**")
     if not optimize_btn:
-        st.info("Adjust the parameters and click 'Optimize Mix' to start.")
+        st.info("🔧 **Adjust the parameters and click 'Optimize Mix' to start.**")
