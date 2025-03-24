@@ -1,8 +1,6 @@
 import os
-import time
 import numpy as np
 import pandas as pd
-import pygame
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
@@ -284,16 +282,6 @@ with st.sidebar:
     batch_size = st.slider("Batch Size", 8, 64, 16)
     optimize_btn = st.button("🚀 Optimize Mix")
 
-# Initialize pygame mixer
-pygame.mixer.init()
-def play_welcome_audio():
-    try:
-        pygame.mixer.music.load("robot_voice.wav")
-        pygame.mixer.music.play()
-        time.sleep(3)  # Tunggu agar suara selesai diputar
-    except Exception as e:
-        st.error(f"Gagal memutar audio: {e}")
-
 # Custom CSS untuk tampilan modern dan canggih
 st.markdown(
     """
@@ -378,14 +366,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Play welcome audio when the app starts
-if 'audio_played' not in st.session_state:
-    st.session_state.audio_played = False
-
-if not st.session_state.audio_played:
-    play_welcome_audio()
-    st.session_state.audio_played = True
 
 # ✅ Tambahkan Status Loading yang Lebih Profesional
 if dataset_path and optimize_btn:
