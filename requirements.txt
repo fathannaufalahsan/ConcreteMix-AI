@@ -3,7 +3,10 @@ pandas
 tensorflow
 keras-tuner
 scikit-learn
+scikit-optimize
 scipy
 matplotlib
 seaborn
+plotly
 streamlit
+logging
