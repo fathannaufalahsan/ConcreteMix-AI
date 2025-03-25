@@ -349,7 +349,7 @@ st.sidebar.markdown("----")
 # Sidebar for input parameters
 with st.sidebar:
     st.header("🔧 Input Parameters")
-    target_strength = st.slider("Target Compressive Strength (MPa)", 30.0, 80.0, 25.0)
+    target_strength = st.slider("Target Compressive Strength (MPa)", 30.0, 80.0, 30.0)
 
     # Pilihan sumber dataset
     dataset_option = st.radio("Select Dataset Source", ("Use Default Dataset", "Upload Your Own CSV"))
