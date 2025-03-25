@@ -10,3 +10,5 @@ seaborn
 plotly
 streamlit
 logging
+flask
+gunicorn
