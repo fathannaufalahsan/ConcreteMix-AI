@@ -41,6 +41,26 @@ from scipy.optimize import differential_evolution, dual_annealing
 import streamlit as st
 
 # ========== MODERN LOGIN SYSTEM ==========
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
+
+# Layout tergantung status login
+if st.session_state.authenticated:
+    st.set_page_config(
+        page_title="AI-Based Concrete Mix Optimizer",
+        page_icon="ahsankarya.ico",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+else:
+    st.set_page_config(
+        page_title="Login",
+        page_icon="ahsankarya.ico",
+        layout="centered",
+        initial_sidebar_state="collapsed"
+    )
+
+# Fungsi untuk hashing password menggunakan SHA-256
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -105,17 +125,6 @@ def login_ui():
                 st.stop()
         else:
             st.error("❌ Incorrect username or password.")
-
-def logout_ui():
-    if st.sidebar.button("🚪 Logout"):
-        st.session_state.authenticated = False
-        st.session_state.username = ""
-        st.session_state.role = ""
-        try:
-            st.rerun()
-        except AttributeError:
-            st.warning("🔄 Please refresh the page manually (F5).")
-            st.stop()
 
 # ✅ Login Gate
 if not st.session_state.authenticated:
@@ -377,18 +386,28 @@ def bayesian_optimization(X_train, y_train, input_shape):
     st.info(f"Best hyperparameters: Units layer 1: {best_hps.get('units_1')}, Units layer 2: {best_hps.get('units_2')}, Dropout rate 1: {best_hps.get('dropout_rate_1')}, Dropout rate 2: {best_hps.get('dropout_rate_2')}, Learning rate: {best_hps.get('learning_rate')}")
     return tuner.get_best_models(num_models=1)[0]
 
-## Streamlit Dashboard
-st.set_page_config(page_title="AI-Based Concrete Mix Optimizer", layout="wide", page_icon="ahsankarya.ico")
-
 # Menampilkan logo Ahsan Karya di sidebar
 st.sidebar.image("ahsantech.png", use_container_width=True)
-st.sidebar.markdown("---")  # Garis pemisah
+st.sidebar.markdown("---")
+
 # ✅ Show user login info
 st.sidebar.markdown("## 👤 Account Info")
 st.sidebar.info(f"Username: `{st.session_state.username}`")
 st.sidebar.info(f"Role: `{st.session_state.role}`")
+
+# --- Tombol Logout ---
+if st.sidebar.button("🚪 Logout"):
+    st.session_state.authenticated = False
+    st.session_state.username = ""
+    st.session_state.role = ""
+    try:
+        st.rerun()
+    except AttributeError:
+        st.warning("🔄 Please refresh manually (F5).")
+        st.stop()
 st.sidebar.markdown("---")
-# Streamlit Page Configuration
+
+# --- Judul & Informasi Aplikasi ---
 st.sidebar.title("🤖 AI-Based Concrete Mix Optimizer")
 st.sidebar.write("### Information")
 
